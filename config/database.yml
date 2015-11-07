@@ -1,0 +1,24 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: 5
+
+development:
+  <<: *default
+  database: truecribs_api_development
+
+test:
+  <<: *default
+  database: truecribs_api_test
+
+
+production:
+  adapter:  postgresql
+  host:     localhost
+  encoding: unicode
+  database: truecribs_api_production
+  username: sethsiegler
+  password:
