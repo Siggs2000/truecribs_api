@@ -1,8 +1,19 @@
-<center><h2>Create a New Game</h2>
-<div class="jumbotron">
-  <center>
-    <%= simple_form_for @game do |f| %>
-      <%= f.input :name %>
-      <%= f.input :location, collection: ["armls", "test_sd", "omreb"] %>
-      <%= f.button :submit, class: "btn btn-large btn-success" %>
-    <% end %>
+
+<div class=col-md-9>
+  <div class="jumbotron">
+    <center><h2>Create a New Game</h2>
+    <center>
+      <%= simple_form_for @game do |f| %>
+        <%= f.input :name %>
+        <%= f.input :location, collection: ["armls", "test_sd", "omreb"] %>
+        <%= f.button :submit, class: "btn btn-large btn-success" %>
+      <% end %>
+    </div>
+</div>
+
+<div class=col-md-3>
+  <div class="jumbotron">
+    <center>
+    <%= link_to("Listing Research", listings_path, :class=>"btn btn-large btn-primary") %>
+  </div>
+</div>

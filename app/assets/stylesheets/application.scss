@@ -19,6 +19,7 @@
 
  body{
    background-color: #919095;
+   background-image: url("dark_embroidery.png");
    font-family: 'Oxygen';
    b{
      color: #3BDBF0;
@@ -28,6 +29,7 @@
 
  .jumbotron{
    background-color: #E0E0E7;
+  //  background-color:rgba(0, 0, 0.4, 0.7);
  }
 
  #alt_jumbo{
@@ -41,7 +43,12 @@
  }
 
  .table{
+   background-color: #E0E0E7;
    b{
      color:#000;
    }
+   p{
+     color:#fff;
+   }
+
  }
