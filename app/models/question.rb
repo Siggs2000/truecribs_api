@@ -17,7 +17,7 @@ class Question < ActiveRecord::Base
       :near => "#{location}",
       :radius => 30
     }
-    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&price[gt]=200000", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&price[gt]=200000&media[ne]=null", query:options)
     response = response.to_hash['bundle']
     count = response.count
     number_choice = rand(count -1)
@@ -102,7 +102,7 @@ class Question < ActiveRecord::Base
       :near => "#{location}",
       :radius => 10
     }
-    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&price[gt]=300000&media[ne]=null", query:options)
     response = response.to_hash['bundle']
     count = response.count
     number_choice = rand(count -1)
@@ -135,7 +135,7 @@ class Question < ActiveRecord::Base
       :near => "#{@location}",
       :radius => 10
     }
-    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&mlsListingID[ne]=#{@mls_num}", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&mlsListingID[ne]=#{@mls_num}&media[ne]=null", query:options)
     response = response.to_hash['bundle']
     count = response.count
 
@@ -170,6 +170,102 @@ class Question < ActiveRecord::Base
     Answer.create!(correct:false, body:body_1, question_id:question_id, image:image_1)
     Answer.create!(correct:false, body:body_2, question_id:question_id, image:image_2)
     Answer.create!(correct:false, body:body_3, question_id:question_id, image:image_3)
+
+    get_sold_question_listings(@location,@vendor,@game_id)
   end
   #### End which listing is priced at $xxxx question
+
+
+
+
+
+  #### Begin which listing was sold the fastest
+  def get_sold_question_listings(location,vendor,game_id)
+    # get first listing
+    # create a question
+    # create an answer
+
+    @location = location
+    options = {
+      :status => "Closed",
+      :near => "#{location}",
+      :radius => 10
+    }
+    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&daysOnMarket[lt]=30&price[gt]=200000", query:options)
+    response = response.to_hash['bundle']
+    count = response.count
+    number_choice = rand(count -1)
+    chosen_listing = response[number_choice]
+    @hood_name = chosen_listing['subdivision']
+    @chosen_mls_num = chosen_listing['mlsListingID']
+    @image_url = nil #chosen_listing['media'].first['url']
+    @price = chosen_listing['price']
+    @address = chosen_listing['address']
+    @num_beds = chosen_listing['bedrooms']
+    @mls_num = chosen_listing['mlsListingID']
+    @dom = chosen_listing['daysOnMarket']
+
+    create_which_dom_question(@image_url, @price, game_id, vendor)
+  end
+
+  def create_which_dom_question(image_url,price,game_id, vendor)
+    question = Question.create!(game_id:game_id, quest_num:3,
+          body:"Which of these listings sold the fastest?")
+    create_correct_answer_three(image_url,question.id)
+    get_other_listings_three(price, @hood_name, question.id, vendor)
+  end
+
+  def create_correct_answer_three(image_url,question_id)
+    Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name} for #{@price}", question_id:question_id)
+  end
+
+  def get_other_listings_three(price, hood_name, question_id, vendor)
+    options = {
+      :status => "Closed",
+      :near => "#{@location}",
+      :radius => 10
+    }
+    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&daysOnMarket[gt]=30&price[gt]=200000", query:options)
+    response = response.to_hash['bundle']
+    count = response.count
+
+    chosen_listing_one = response[0]
+    @hood_name_one = chosen_listing_one['subdivision']
+    @chosen_mls_num_one = chosen_listing_one['mlsListingID']
+    @image_url_one = nil#chosen_listing_one['media'].first['url']
+    @num_beds_one = chosen_listing_one['bedrooms']
+    @dom_one = chosen_listing_one['daysOnMarket']
+    @price_one = chosen_listing_one['price']
+    body_1 = "#{@num_beds_one} Bedrooms in #{@hood_name_one} for #{@price_one}"
+    image_1 = @image_url_one
+
+    chosen_listing_two = response[1]
+    @hood_name_two = chosen_listing_two['subdivision']
+    @chosen_mls_num_two = chosen_listing_two['mlsListingID']
+    @image_url_two = nil#chosen_listing_two['media'].first['url']
+    @num_beds_two = chosen_listing_two['bedrooms']
+    @dom_two = chosen_listing_two['daysOnMarket']
+    @price_two = chosen_listing_two['price']
+    body_2 = "#{@num_beds_two} Bedrooms in #{@hood_name_two} for #{@price_two}"
+    image_2 = @image_url_two
+
+    chosen_listing_three = response[2]
+    @hood_name_three = chosen_listing_three['subdivision']
+    @chosen_mls_num_three = chosen_listing_three['mlsListingID']
+    @image_url_three = nil#chosen_listing_three['media'].first['url']
+    @num_beds_three = chosen_listing_three['bedrooms']
+    @dom_three = chosen_listing_three['daysOnMarket']
+    @price_three = chosen_listing_three['price']
+    body_3 = "#{@num_beds_three} Bedrooms in #{@hood_name_three} for #{@price_three}"
+    image_3 = @image_url_three
+
+    create_wrong_answers_three(question_id, body_1, body_2, body_3, image_1, image_2, image_3)
+  end
+
+  def create_wrong_answers_three(question_id, body_1, body_2, body_3, image_1, image_2, image_3)
+    Answer.create!(correct:false, body:body_1, question_id:question_id)
+    Answer.create!(correct:false, body:body_2, question_id:question_id)
+    Answer.create!(correct:false, body:body_3, question_id:question_id)
+  end
+  #### End which listing was sold in 2015
 end

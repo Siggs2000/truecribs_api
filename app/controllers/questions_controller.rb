@@ -36,10 +36,6 @@ class QuestionsController < ApplicationController
     end
   end
 
-
-
-
-
   # GET /questions/new
   def new
     @question = Question.new
