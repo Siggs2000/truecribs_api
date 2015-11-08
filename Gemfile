@@ -25,6 +25,8 @@ gem 'puma' # webserver
 gem 'figaro' # env variable managment
 gem 'pg'
 gem 'httparty'
+gem 'timers'
+gem 'rails_admin'
 
 
 group :development, :test do

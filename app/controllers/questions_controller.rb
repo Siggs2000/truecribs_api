@@ -1,4 +1,6 @@
 class QuestionsController < ApplicationController
+  require 'timers'
+
   before_action :set_question, only: [:show, :edit, :update, :destroy]
 
   # GET /questions
@@ -10,7 +12,28 @@ class QuestionsController < ApplicationController
   def show
     @question = Question.find(params[:id])
     @answers = Answer.where(question_id: @question.id)
+
+    #while match == false
+    check_sumbission
   end
+
+  def check_sumbission
+    game = @answers.first.question.game
+    @player_count = User.where(game_id:game.id).count
+
+    question_id = @answers.first.question.id
+    @count = Guess.where(question_id:question_id).count
+
+    p "COUNT IS: #{@count}"
+    if @count == @player_count
+      game.update(stage:2)
+      next_question = (params[:id].to_i + 1)
+      @next_question = Question.find(next_question)
+      redirect_to question_path(@next_question)
+    end
+  end
+
+
 
   # GET /questions/new
   def new
@@ -55,6 +78,6 @@ class QuestionsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def question_params
-      params.permit(:game_id, :body, :image_url)
+      params.permit(:game_id, :body, :image_url, :quest_num, :image_url)
     end
 end

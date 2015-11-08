@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount RailsAdmin::Engine => '/dashboard', as: 'rails_admin'
   devise_for :users, :controllers => { :registrations => "users/registrations" }
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -8,9 +9,23 @@ Rails.application.routes.draw do
   resources :questions
   resources :games
 
+  devise_scope :user do
+    #post 'registrations' => 'registrations#create', :as => 'register'
+    post 'sessions' => 'sessions#create', :as => 'login'
+    #put 'sessions' => 'sessions#update', :as => 'edit_session'
+    #delete 'sessions' => 'sessions#destroy', :as => 'logout'
+    #put 'registrations' => 'registrations#edit', :as => 'edit'
+  end
+
   namespace :api do
     namespace :v1 do
       resources :guesses
+      resources :questions
+      resources :answers
+      resources :games
+      resources :games do
+        post 'join_game' => 'games#join_game', :as => 'join_game'
+      end
     end
   end
 

@@ -9,6 +9,8 @@ class Question < ActiveRecord::Base
     # create a question
     # create an answer
 
+    @vendor = vendor
+    @game_id = game_id
     @location = location
     options = {
       :status => "Active",
@@ -32,7 +34,7 @@ class Question < ActiveRecord::Base
   def create_neighborhood_question(image,game_id)
     question = Question.create!(game_id:game_id,
           body:"What neighborhood is this listing in?",
-          image_url:image)
+          image_url:image, quest_num:1)
     create_correct_answer(@hood_name,question.id)
     get_other_listings(@price, @hood_name, question.id)
   end
@@ -51,20 +53,22 @@ class Question < ActiveRecord::Base
       :radius => 30,
     }
 
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&subdivision[ne]=#{@hood_name}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
+    @url_hood = URI.escape("#{@hood_name}")
+    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&subdivision[ne]=#{@url_hood}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
     response = response.to_hash['bundle']
     count = response.count
     first_listing = response[0]
     choice_1 = first_listing['subdivision']
 
-                                                                                                                    # &and.0.zoning.ne=C-1&and.1.zoning.ne=PUD
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@hood_name}&and.1.subdivision.ne=#{choice_1}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
+    @url_choice_1 = URI.escape("#{choice_1}")                                                                                                             # &and.0.zoning.ne=C-1&and.1.zoning.ne=PUD
+    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
     response = response.to_hash['bundle']
     count = response.count
     second_listing = response[0]
     choice_2 = second_listing['subdivision']
 
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@hood_name}&and.1.subdivision.ne=#{choice_1}&and.2.subdivision.ne=#{choice_2}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
+    @url_choice_2 = URI.escape("#{choice_2}")
+    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&and.2.subdivision.ne=#{@url_choice_2}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
     response = response.to_hash['bundle']
     count = response.count
     third_listing = response[0]
@@ -77,6 +81,8 @@ class Question < ActiveRecord::Base
     Answer.create!(correct:false, body:choice_1, question_id:question_id)
     Answer.create!(correct:false, body:choice_2, question_id:question_id)
     Answer.create!(correct:false, body:choice_3, question_id:question_id)
+
+    get_listing_question_listings(@location,@vendor,@game_id)
   end
   #### End neighborhood question
 
@@ -113,13 +119,13 @@ class Question < ActiveRecord::Base
   end
 
   def create_which_price_question(image_url,price,game_id, vendor)
-    question = Question.create!(game_id:game_id,
+    question = Question.create!(game_id:game_id, quest_num:2,
           body:"Which of these listings are listed for #{ActionController::Base.helpers.number_to_currency(price, precision: 0)}?")
-    create_correct_answer(image_url,question.id)
+    create_correct_answer_two(image_url,question.id)
     get_other_listings_two(price, @hood_name, question.id, vendor)
   end
 
-  def create_correct_answer(image_url,question_id)
+  def create_correct_answer_two(image_url,question_id)
     Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name}", question_id:question_id, image:@image_url)
   end
 
