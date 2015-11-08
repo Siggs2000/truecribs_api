@@ -20,7 +20,7 @@ class Guess < ActiveRecord::Base
       Guess.where(question_id:self.question_id).each do |guess|
         answer = Answer.find(guess.answer_id)
         if answer.correct?
-          points = guess.user.points
+          points = guess.user.score
           guess.user.update(score:points+50)
         end
       end #Guess.where
