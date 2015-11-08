@@ -1,4 +1,53 @@
 <p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_listing_path(@listing) %> |
-<%= link_to 'Back', listings_path %>
+<div class=col-md-6>
+  <div class="jumbotron">
+    <%= image_tag("#{@image_url}", size:"470x300") %>
+
+  </div>
+
+</div>
+
+<div class=col-md-6>
+  <h3><%= @address %></h3>
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+          <td>Address:</td>
+          <td><%= @address %></td>
+        </tr>
+        <tr>
+          <td>Price</td>
+          <td><%= @price %></td>
+        </tr>
+        <tr>
+          <td>Beds</td>
+          <td><%= @beds %></td>
+        </tr>
+        <tr>
+          <td>Baths</td>
+          <td><%= @baths %></td>
+        </tr>
+        <tr>
+          <td>Number of Overpriced Votes</td>
+          <td class="danger"><%= @listing.list_price_over %></td>
+        </tr>
+        <tr>
+          <td>Number of Underpriced Votes</td>
+          <td class="success"><%= @listing.list_price_under %></td>
+        </tr>
+        <tr>
+          <td>Number of Trendy Votes</td>
+          <td class="success"><%= @listing.recognizable %></td>
+        </tr>
+
+    </tbody>
+  </table>
+</div>

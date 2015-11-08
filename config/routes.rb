@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   root 'games#index'
   resources :questions
   resources :games
+  resources :listings
 
   devise_scope :user do
     #post 'registrations' => 'registrations#create', :as => 'register'

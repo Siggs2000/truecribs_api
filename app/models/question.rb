@@ -50,11 +50,11 @@ class Question < ActiveRecord::Base
     options = {
       :status => "Active",
       :near => "#{@location}",
-      :radius => 30,
+      :radius => 100,
     }
 
     @url_hood = URI.escape("#{@hood_name}")
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&subdivision[ne]=#{@url_hood}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/#{@vendor}/listings?access_token=#{ENV['server_token']}&subdivision[ne]=#{@url_hood}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
     response = response.to_hash['bundle']
     count = response.count
     first_listing = response[0]
@@ -62,7 +62,7 @@ class Question < ActiveRecord::Base
     @choice_1_mls_num = first_listing['mlsListingID']
 
     @url_choice_1 = URI.escape("#{choice_1}")                                                                                                             # &and.0.zoning.ne=C-1&and.1.zoning.ne=PUD
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/#{@vendor}/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
     response = response.to_hash['bundle']
     count = response.count
     second_listing = response[0]
@@ -70,7 +70,7 @@ class Question < ActiveRecord::Base
     @choice_2_mls_num = second_listing['mlsListingID']
 
     @url_choice_2 = URI.escape("#{choice_2}")
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&and.2.subdivision.ne=#{@url_choice_2}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/#{@vendor}/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&and.2.subdivision.ne=#{@url_choice_2}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
     response = response.to_hash['bundle']
     count = response.count
     third_listing = response[0]
@@ -219,7 +219,7 @@ class Question < ActiveRecord::Base
   end
 
   def create_correct_answer_three(image_url,question_id)
-    Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name} for #{@price}", question_id:question_id, mls_num:@mls_num)
+    Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name} for #{ActionController::Base.helpers.number_to_currency(@price, precision: 0)}", question_id:question_id, mls_num:@mls_num)
   end
 
   def get_other_listings_three(price, hood_name, question_id, vendor)
@@ -239,7 +239,7 @@ class Question < ActiveRecord::Base
     @num_beds_one = chosen_listing_one['bedrooms']
     @dom_one = chosen_listing_one['daysOnMarket']
     @price_one = chosen_listing_one['price']
-    body_1 = "#{@num_beds_one} Bedrooms in #{@hood_name_one} for #{@price_one}"
+    body_1 = "#{@num_beds_one} Bedrooms in #{@hood_name_one} for #{ActionController::Base.helpers.number_to_currency(@price_one, precision: 0)}"
     image_1 = @image_url_one
 
     chosen_listing_two = response[1]
@@ -249,7 +249,7 @@ class Question < ActiveRecord::Base
     @num_beds_two = chosen_listing_two['bedrooms']
     @dom_two = chosen_listing_two['daysOnMarket']
     @price_two = chosen_listing_two['price']
-    body_2 = "#{@num_beds_two} Bedrooms in #{@hood_name_two} for #{@price_two}"
+    body_2 = "#{@num_beds_two} Bedrooms in #{@hood_name_two} for #{ActionController::Base.helpers.number_to_currency(@price_two, precision: 0)}"
     image_2 = @image_url_two
 
     chosen_listing_three = response[2]
@@ -259,7 +259,7 @@ class Question < ActiveRecord::Base
     @num_beds_three = chosen_listing_three['bedrooms']
     @dom_three = chosen_listing_three['daysOnMarket']
     @price_three = chosen_listing_three['price']
-    body_3 = "#{@num_beds_three} Bedrooms in #{@hood_name_three} for #{@price_three}"
+    body_3 = "#{@num_beds_three} Bedrooms in #{@hood_name_three} for #{ActionController::Base.helpers.number_to_currency(@price_three, precision: 0)}"
     image_3 = @image_url_three
 
     create_wrong_answers_three(question_id, body_1, body_2, body_3, image_1, image_2, image_3)

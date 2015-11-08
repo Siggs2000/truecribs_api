@@ -3,6 +3,6 @@
   <center>
     <%= simple_form_for @game do |f| %>
       <%= f.input :name %>
-      <%= f.input :location, collection: ["armls", "test_sd"] %>
+      <%= f.input :location, collection: ["armls", "test_sd", "omreb"] %>
       <%= f.button :submit, class: "btn btn-large btn-success" %>
     <% end %>

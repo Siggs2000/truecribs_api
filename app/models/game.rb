@@ -19,6 +19,8 @@ class Game < ActiveRecord::Base
       @location = "Phoenix"
     elsif vendor == "test_sd"
       @location = "San%20Diego"
+    elsif vendor == "omreb"
+      @location = "Okanagan"
     end
 
     Question.new.get_first_listing(@location,vendor,self.id)
@@ -27,6 +29,10 @@ class Game < ActiveRecord::Base
   def build_which_listing_question(vendor)
     if vendor == "armls"
       @location = "Phoenix"
+    elsif vendor == "test_sd"
+      @location = "San%20Diego"
+    elsif vendor == "omreb"
+      @location = "Okanagan"
     end
     Question.new.get_listing_question_listings(@location,vendor,self.id)
   end
