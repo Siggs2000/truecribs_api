@@ -8,7 +8,7 @@ class Api::V1::GuessesController < ApplicationController
     mp @guess
 
     if @guess.save
-      # render json: {success:true, result:@guess}
+      render json: {success:true, result:@guess}
       # # update the valuable feedback data
       # mls_num = @guess.answer.mls_num
       # p "MLS NUM IS #{mls_num}"
