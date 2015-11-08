@@ -24,9 +24,11 @@ class GamesController < ApplicationController
   end
 
   def create
+    @game = Game.new(game_params)
     @game = Game.create(game_params)
-    @game.build_questions(@game.location)
+
     current_user.update(game_id:@game.id, score:0)
+    @game.build_questions(@game.location)
     first_question = Question.where(game_id:@game.id).first
     redirect_to question_path(first_question)
   end
