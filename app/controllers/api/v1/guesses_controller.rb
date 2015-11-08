@@ -2,10 +2,10 @@ class Api::V1::GuessesController < ApplicationController
   protect_from_forgery with: :null_session
 
   def create
-    mp params
+    p params
     answer = Answer.find(params[:answer_id])
     @guess = Guess.new(answer_id:params[:answer_id], user_id:params[:user_id], question_id:answer.question_id)
-    mp @guess
+    p @guess
 
     if @guess.save
       render json: {success:true, result:@guess}
