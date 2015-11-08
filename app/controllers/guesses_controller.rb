@@ -23,6 +23,7 @@ class GuessesController < ApplicationController
   def create
     @guess = Guess.new(guess_params)
 
+
     if @guess.save
       redirect_to @guess, notice: 'Guess was successfully created.'
     else
@@ -53,6 +54,6 @@ class GuessesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def guess_params
-      params[:guess]
+      params.permit(:answer_id, :user_id, :question_id)
     end
 end

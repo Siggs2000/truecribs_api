@@ -3,7 +3,7 @@ class Question < ActiveRecord::Base
   belongs_to :game
   has_many :guesses
 
-
+  #### Begin Neighborhood Question
   def get_first_listing(location,vendor,game_id)
     # get first listing
     # create a question
@@ -78,5 +78,92 @@ class Question < ActiveRecord::Base
     Answer.create!(correct:false, body:choice_2, question_id:question_id)
     Answer.create!(correct:false, body:choice_3, question_id:question_id)
   end
+  #### End neighborhood question
 
+
+
+
+
+  #### Begin which listing is priced at $xxxx question
+  def get_listing_question_listings(location,vendor,game_id)
+    # get first listing
+    # create a question
+    # create an answer
+
+    @location = location
+    options = {
+      :status => "Active",
+      :near => "#{location}",
+      :radius => 10
+    }
+    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence", query:options)
+    response = response.to_hash['bundle']
+    count = response.count
+    number_choice = rand(count -1)
+    chosen_listing = response[number_choice]
+    @hood_name = chosen_listing['subdivision']
+    @chosen_mls_num = chosen_listing['mlsListingID']
+    @image_url = chosen_listing['media'].first['url']
+    @price = chosen_listing['price']
+    @address = chosen_listing['address']
+    @num_beds = chosen_listing['bedrooms']
+    @mls_num = chosen_listing['mlsListingID']
+
+    create_which_price_question(@image_url, @price, game_id, vendor)
+  end
+
+  def create_which_price_question(image_url,price,game_id, vendor)
+    question = Question.create!(game_id:game_id,
+          body:"Which of these listings are listed for #{ActionController::Base.helpers.number_to_currency(price, precision: 0)}?")
+    create_correct_answer(image_url,question.id)
+    get_other_listings_two(price, @hood_name, question.id, vendor)
+  end
+
+  def create_correct_answer(image_url,question_id)
+    Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name}", question_id:question_id, image:@image_url)
+  end
+
+  def get_other_listings_two(price, hood_name, question_id, vendor)
+    options = {
+      :status => "Active",
+      :near => "#{@location}",
+      :radius => 10
+    }
+    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&mlsListingID[ne]=#{@mls_num}", query:options)
+    response = response.to_hash['bundle']
+    count = response.count
+
+    chosen_listing_one = response[0]
+    @hood_name_one = chosen_listing_one['subdivision']
+    @chosen_mls_num_one = chosen_listing_one['mlsListingID']
+    @image_url_one = chosen_listing_one['media'].first['url']
+    @num_beds_one = chosen_listing_one['bedrooms']
+    body_1 = "#{@num_beds_one} Bedrooms in #{@hood_name_one}"
+    image_1 = @image_url_one
+
+    chosen_listing_two = response[1]
+    @hood_name_two = chosen_listing_two['subdivision']
+    @chosen_mls_num_two = chosen_listing_two['mlsListingID']
+    @image_url_two = chosen_listing_two['media'].first['url']
+    @num_beds_two = chosen_listing_two['bedrooms']
+    body_2 = "#{@num_beds_two} Bedrooms in #{@hood_name_two}"
+    image_2 = @image_url_two
+
+    chosen_listing_three = response[2]
+    @hood_name_three = chosen_listing_three['subdivision']
+    @chosen_mls_num_three = chosen_listing_three['mlsListingID']
+    @image_url_three = chosen_listing_three['media'].first['url']
+    @num_beds_three = chosen_listing_three['bedrooms']
+    body_3 = "#{@num_beds_three} Bedrooms in #{@hood_name_three}"
+    image_3 = @image_url_three
+
+    create_wrong_answers_two(question_id, body_1, body_2, body_3, image_1, image_2, image_3)
+  end
+
+  def create_wrong_answers_two(question_id, body_1, body_2, body_3, image_1, image_2, image_3)
+    Answer.create!(correct:false, body:body_1, question_id:question_id, image:image_1)
+    Answer.create!(correct:false, body:body_2, question_id:question_id, image:image_2)
+    Answer.create!(correct:false, body:body_3, question_id:question_id, image:image_3)
+  end
+  #### End which listing is priced at $xxxx question
 end

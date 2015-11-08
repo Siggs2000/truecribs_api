@@ -1,4 +1,15 @@
-<p id="notice"><%= notice %></p>
 
-<%= link_to 'Edit', edit_question_path(@question) %> |
-<%= link_to 'Back', questions_path %>
+<div class="jumbotron">
+  <center><h1><%= @question.body %></h1>
+  <br><br>
+  <%= image_tag("#{@question.image_url}") %>
+</div>
+
+
+<center>
+  <% @answers.each do |answer| %>
+    <div class="col-md-6">
+      <p class="bg-info"><%= answer.body %></p>
+      <p class="bg-info"><%= image_tag(answer.image) %></p>
+    </div>
+  <% end %>

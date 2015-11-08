@@ -8,6 +8,8 @@ class QuestionsController < ApplicationController
 
   # GET /questions/1
   def show
+    @question = Question.find(params[:id])
+    @answers = Answer.where(question_id: @question.id)
   end
 
   # GET /questions/new
@@ -53,6 +55,6 @@ class QuestionsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def question_params
-      params.permit(:game_id, :body)
+      params.permit(:game_id, :body, :image_url)
     end
 end

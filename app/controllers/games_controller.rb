@@ -18,4 +18,3 @@ class GamesController < ApplicationController
       params.permit(:name, :location, :winner, :stage, :status)
     end
 end
-end

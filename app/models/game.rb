@@ -2,6 +2,7 @@ class Game < ActiveRecord::Base
   has_many :users
   has_many :questions
 
+
   def build_neighborhood_question(vendor)
     # Create a quesion
     # get a listing, save it's neigbhorhood and image URL
@@ -17,4 +18,10 @@ class Game < ActiveRecord::Base
     Question.new.get_first_listing(@location,vendor,self.id)
   end
 
+  def build_which_listing_question(vendor)
+    if vendor == "armls"
+      @location = "Phoenix"
+    end
+    Question.new.get_listing_question_listings(@location,vendor,self.id)
+  end
 end
