@@ -19,7 +19,7 @@ class Api::V1::GamesController < ApplicationController
 
   def join_game
     @game = Game.find(params[:game_id])
-    User.find(params[:user_id]).update(game_id:params[:game_id])
+    User.find(params[:user_id]).update(game_id:params[:game_id], score:0)
     render json: {sucess:true}
   end
 

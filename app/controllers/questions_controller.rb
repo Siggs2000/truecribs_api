@@ -12,6 +12,7 @@ class QuestionsController < ApplicationController
   def show
     @question = Question.find(params[:id])
     @answers = Answer.where(question_id: @question.id)
+    @users = User.where(game_id:@question.game.id).order(score: :desc)
 
     #while match == false
     check_sumbission
@@ -34,6 +35,8 @@ class QuestionsController < ApplicationController
       redirect_to question_path(@next_question)
     end
   end
+
+
 
 
 

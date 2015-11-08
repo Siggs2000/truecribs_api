@@ -1,0 +1,7 @@
+<div class="jumbotron" id="alt_jumbo">
+  <center>
+  <h2>Scoreboard</h2>
+  <% @users.each do |user| %>
+    <b><%= "#{user.name}  --  #{user.score} points" %><br><br></b>
+  <% end %>
+</div>

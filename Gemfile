@@ -27,6 +27,7 @@ gem 'pg'
 gem 'httparty'
 gem 'timers'
 gem 'rails_admin'
+gem 'simple_form'
 
 
 group :development, :test do

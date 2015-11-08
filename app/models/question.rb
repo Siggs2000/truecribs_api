@@ -17,7 +17,7 @@ class Question < ActiveRecord::Base
       :near => "#{location}",
       :radius => 30
     }
-    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/#{vendor}/listings?access_token=#{ENV['server_token']}&subtype=Single%20Family%20Residence&price[gt]=200000", query:options)
     response = response.to_hash['bundle']
     count = response.count
     number_choice = rand(count -1)
@@ -54,21 +54,21 @@ class Question < ActiveRecord::Base
     }
 
     @url_hood = URI.escape("#{@hood_name}")
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&subdivision[ne]=#{@url_hood}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&subdivision[ne]=#{@url_hood}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
     response = response.to_hash['bundle']
     count = response.count
     first_listing = response[0]
     choice_1 = first_listing['subdivision']
 
     @url_choice_1 = URI.escape("#{choice_1}")                                                                                                             # &and.0.zoning.ne=C-1&and.1.zoning.ne=PUD
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
     response = response.to_hash['bundle']
     count = response.count
     second_listing = response[0]
     choice_2 = second_listing['subdivision']
 
     @url_choice_2 = URI.escape("#{choice_2}")
-    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&and.2.subdivision.ne=#{@url_choice_2}&price[lt]=#{high_price}&price[gt]=#{low_price}", query:options)
+    response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&and.2.subdivision.ne=#{@url_choice_2}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
     response = response.to_hash['bundle']
     count = response.count
     third_listing = response[0]

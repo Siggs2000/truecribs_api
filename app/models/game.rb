@@ -17,6 +17,8 @@ class Game < ActiveRecord::Base
 
     if vendor == "armls"
       @location = "Phoenix"
+    elsif vendor == "test_sd"
+      @location = "San%20Diego"
     end
 
     Question.new.get_first_listing(@location,vendor,self.id)
@@ -33,5 +35,6 @@ class Game < ActiveRecord::Base
 
   def set_stage
     self.update(stage:1)
+    #build_neighborhood_question("#{self.location}")
   end
 end

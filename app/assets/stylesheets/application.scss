@@ -16,3 +16,26 @@
 
  @import "bootstrap-sprockets";
  @import "bootstrap";
+
+ body{
+   background-color: #919095;
+   font-family: 'Oxygen';
+   b{
+     color: #3BDBF0;
+   }
+
+ }
+
+ .jumbotron{
+   background-color: #E0E0E7;
+ }
+
+ #alt_jumbo{
+   background-color: #0D191D;
+   h3{
+     color:#3BDBF0;
+   }
+   h2{
+     color:#fff;
+   }
+ }

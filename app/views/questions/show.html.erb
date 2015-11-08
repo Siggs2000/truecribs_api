@@ -1,18 +1,28 @@
 <meta http-equiv="refresh" content="5" />
 
 
+<div class=col-md-9>
+  <div class="jumbotron">
+    <center><h3><%= @question.body %></h3>
+    <br><br>
+    <% unless @question.image_url.nil? %>
+      <%= image_tag("#{@question.image_url}", size:"400x400") %>
+    <% end %>
+  </div>
 
-<div class="jumbotron">
-  <center><h1><%= @question.body %></h1>
-  <br><br>
-  <%= image_tag("#{@question.image_url}") %>
+
+  <center>
+    <% @answers.each do |answer| %>
+      <div class="col-md-6">
+        <p class="bg-info"><%= answer.body %></p>
+        <% unless answer.image.nil? %>
+          <p class="bg-info"><%= image_tag(answer.image, size:"200x200") %></p>
+        <% end %>
+        <br>
+      </div>
+    <% end %>
 </div>
 
-
-<center>
-  <% @answers.each do |answer| %>
-    <div class="col-md-6">
-      <p class="bg-info"><%= answer.body %></p>
-      <p class="bg-info"><%= image_tag(answer.image) %></p>
-    </div>
-  <% end %>
+<div class=col-md-3>
+  <%= render 'scoreboard' %>
+</div>

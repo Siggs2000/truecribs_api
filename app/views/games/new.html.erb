@@ -1,0 +1,8 @@
+<center><h2>Create a New Game</h2>
+<div class="jumbotron">
+  <center>
+    <%= simple_form_for @game do |f| %>
+      <%= f.input :name %>
+      <%= f.input :location, collection: ["armls", "test_sd"] %>
+      <%= f.button :submit, class: "btn btn-large btn-success" %>
+    <% end %>
