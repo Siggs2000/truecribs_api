@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151108041614) do
+ActiveRecord::Schema.define(version: 20151108142329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20151108041614) do
     t.string   "image"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "mls_num"
   end
 
   create_table "games", force: :cascade do |t|
@@ -41,6 +42,17 @@ ActiveRecord::Schema.define(version: 20151108041614) do
     t.integer  "question_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "listings", force: :cascade do |t|
+    t.string   "mls_num"
+    t.string   "list_agent"
+    t.integer  "list_price_over",  default: 0
+    t.integer  "list_price_under", default: 0
+    t.integer  "recognizable",     default: 0
+    t.integer  "current_trends",   default: 0
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
   create_table "questions", force: :cascade do |t|

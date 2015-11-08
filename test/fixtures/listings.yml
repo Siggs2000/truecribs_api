@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mls_num: MyString
+  list_agent: MyString
+  list_price_over: 1
+  list_price_under: 1
+  recognizable: 1
+  current_trends: 1
+
+two:
+  mls_num: MyString
+  list_agent: MyString
+  list_price_over: 1
+  list_price_under: 1
+  recognizable: 1
+  current_trends: 1

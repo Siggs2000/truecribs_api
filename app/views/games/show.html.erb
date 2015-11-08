@@ -1,0 +1,36 @@
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Answer One</th>
+            <th>Answer Two</th>
+            <th>Answer Three</th>
+            <th>Answer Four</th>
+        </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+            <td><%= user.name %></td>
+            <% if Guess.where("user_id = ? AND answer_id =?",user.id, @first_answer.id).last.answer.correct == true  %>
+              <td class="success"><%= Guess.where("user_id = ? AND answer_id =?",user.id, @first_answer.id).last.answer.body %></td>
+            <% else %>
+              <td class="danger"><%= Guess.where("user_id = ? AND answer_id =?",user.id, @first_answer.id).last.answer.body %></td>
+            <% end %>
+
+            <% if Guess.where("user_id = ? AND answer_id =?",user.id, @second_answer.id).last.answer.correct == true  %>
+              <td class="success"><%= Guess.where("user_id = ? AND answer_id =?",user.id, @second_answer.id).last.answer.body %></td>
+            <% else %>
+              <td class="danger"><%= Guess.where("user_id = ? AND answer_id =?",user.id, @second_answer.id).last.answer.body %></td>
+            <% end %>
+
+            <% if Guess.where("user_id = ? AND question_id =?",user.id, @third_answer.question_id).last.answer.correct == true  %>
+              <td class="success"><%= Guess.where("user_id = ? AND question_id =?",user.id, @third_answer.question_id).last.answer.body %></td>
+            <% else %>
+              <td class="danger"><%= Guess.where("user_id = ? AND question_id =?",user.id, @third_answer.question_id).last.answer.body %></td>
+            <% end %>
+
+
+        </tr>
+      <% end %>

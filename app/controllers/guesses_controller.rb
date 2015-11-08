@@ -25,6 +25,7 @@ class GuessesController < ApplicationController
 
 
     if @guess.save
+
       redirect_to @guess, notice: 'Guess was successfully created.'
     else
       render :new

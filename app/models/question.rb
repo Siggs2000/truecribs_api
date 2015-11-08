@@ -33,14 +33,14 @@ class Question < ActiveRecord::Base
 
   def create_neighborhood_question(image,game_id)
     question = Question.create!(game_id:game_id,
-          body:"What neighborhood is this listing in?",
+          body:"Which neighborhood is this listing in?",
           image_url:image, quest_num:1)
     create_correct_answer(@hood_name,question.id)
     get_other_listings(@price, @hood_name, question.id)
   end
 
   def create_correct_answer(hood_name,question_id)
-    Answer.create!(correct:true, body:@hood_name, question_id:question_id)
+    Answer.create!(correct:true, body:@hood_name, question_id:question_id, mls_num:@chosen_mls_num)
   end
 
   def get_other_listings(price, subdivision, question_id)
@@ -59,6 +59,7 @@ class Question < ActiveRecord::Base
     count = response.count
     first_listing = response[0]
     choice_1 = first_listing['subdivision']
+    @choice_1_mls_num = first_listing['mlsListingID']
 
     @url_choice_1 = URI.escape("#{choice_1}")                                                                                                             # &and.0.zoning.ne=C-1&and.1.zoning.ne=PUD
     response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
@@ -66,6 +67,7 @@ class Question < ActiveRecord::Base
     count = response.count
     second_listing = response[0]
     choice_2 = second_listing['subdivision']
+    @choice_2_mls_num = second_listing['mlsListingID']
 
     @url_choice_2 = URI.escape("#{choice_2}")
     response = HTTParty.get("https://rets.io/api/v1/armls/listings?access_token=#{ENV['server_token']}&and.0.subdivision.ne=#{@url_hood}&and.1.subdivision.ne=#{@url_choice_1}&and.2.subdivision.ne=#{@url_choice_2}&price[lt]=#{high_price}&price[gt]=#{low_price}&subtype=Single%20Family%20Residence", query:options)
@@ -73,14 +75,15 @@ class Question < ActiveRecord::Base
     count = response.count
     third_listing = response[0]
     choice_3 = third_listing['subdivision']
+    @choice_3_mls_num = third_listing['mlsListingID']
 
     create_wrong_answers(question_id, choice_1, choice_2, choice_3)
   end
 
   def create_wrong_answers(question_id, choice_1, choice_2, choice_3)
-    Answer.create!(correct:false, body:choice_1, question_id:question_id)
-    Answer.create!(correct:false, body:choice_2, question_id:question_id)
-    Answer.create!(correct:false, body:choice_3, question_id:question_id)
+    Answer.create!(correct:false, body:choice_1, question_id:question_id, mls_num:@choice_1_mls_num )
+    Answer.create!(correct:false, body:choice_2, question_id:question_id, mls_num:@choice_2_mls_num )
+    Answer.create!(correct:false, body:choice_3, question_id:question_id, mls_num:@choice_3_mls_num )
 
     get_listing_question_listings(@location,@vendor,@game_id)
   end
@@ -126,7 +129,7 @@ class Question < ActiveRecord::Base
   end
 
   def create_correct_answer_two(image_url,question_id)
-    Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name}", question_id:question_id, image:@image_url)
+    Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name}", question_id:question_id, image:@image_url, mls_num:@mls_num)
   end
 
   def get_other_listings_two(price, hood_name, question_id, vendor)
@@ -167,9 +170,9 @@ class Question < ActiveRecord::Base
   end
 
   def create_wrong_answers_two(question_id, body_1, body_2, body_3, image_1, image_2, image_3)
-    Answer.create!(correct:false, body:body_1, question_id:question_id, image:image_1)
-    Answer.create!(correct:false, body:body_2, question_id:question_id, image:image_2)
-    Answer.create!(correct:false, body:body_3, question_id:question_id, image:image_3)
+    Answer.create!(correct:false, body:body_1, question_id:question_id, image:image_1, mls_num:@chosen_mls_num_one)
+    Answer.create!(correct:false, body:body_2, question_id:question_id, image:image_2, mls_num:@chosen_mls_num_two)
+    Answer.create!(correct:false, body:body_3, question_id:question_id, image:image_3, mls_num:@chosen_mls_num_three)
 
     get_sold_question_listings(@location,@vendor,@game_id)
   end
@@ -216,7 +219,7 @@ class Question < ActiveRecord::Base
   end
 
   def create_correct_answer_three(image_url,question_id)
-    Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name} for #{@price}", question_id:question_id)
+    Answer.create!(correct:true, body:"#{@num_beds} Bedrooms in #{@hood_name} for #{@price}", question_id:question_id, mls_num:@mls_num)
   end
 
   def get_other_listings_three(price, hood_name, question_id, vendor)
@@ -263,9 +266,9 @@ class Question < ActiveRecord::Base
   end
 
   def create_wrong_answers_three(question_id, body_1, body_2, body_3, image_1, image_2, image_3)
-    Answer.create!(correct:false, body:body_1, question_id:question_id)
-    Answer.create!(correct:false, body:body_2, question_id:question_id)
-    Answer.create!(correct:false, body:body_3, question_id:question_id)
+    Answer.create!(correct:false, body:body_1, question_id:question_id, mls_num:@chosen_mls_num_one)
+    Answer.create!(correct:false, body:body_2, question_id:question_id, mls_num:@chosen_mls_num_two)
+    Answer.create!(correct:false, body:body_3, question_id:question_id, mls_num:@chosen_mls_num_three)
   end
   #### End which listing was sold in 2015
 end

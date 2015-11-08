@@ -14,6 +14,6 @@ class Api::V1::AnswersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def game_params
-      params.permit(:name, :location, :winner, :stage, :status, :quest_num)
+      params.permit(:name, :location, :winner, :stage, :status, :quest_num, :mls_num)
     end
 end

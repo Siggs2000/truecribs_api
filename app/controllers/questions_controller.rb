@@ -31,8 +31,13 @@ class QuestionsController < ApplicationController
       stage = stage + 1
       game.update(stage:stage)
       next_question = (params[:id].to_i + 1)
-      @next_question = Question.find(next_question)
-      redirect_to question_path(@next_question)
+      if Question.where(id:next_question).count == 0
+        users = User.where(game_id:game.id).order(score: :desc)
+        game.update(status:"completed", winner:users.first.id)
+      else
+        @next_question = Question.find(next_question)
+        redirect_to question_path(@next_question)
+      end
     end
   end
 
