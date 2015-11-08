@@ -4,13 +4,16 @@ class Api::V1::GuessesController < ApplicationController
   def create
     answer = Answer.find(params[:answer_id])
     @guess = Guess.new(answer_id:params[:answer_id], user_id:params[:user_id], question_id:answer.question_id)
-
+    mp @guess
 
     if @guess.save
       render json: {success:true, result:@guess}
       # update the valuable feedback data
       mls_num = @guess.answer.mls_num
+      p "MLS NUM IS #{mls_num}"
       question_num = @guess.answer.question.quest_num
+      p "Question NUM IS #{question_num}"
+
       if Listing.where(mls_num:mls_num).count >= 1
         @listing = Listing.where(mls_num:mls_num).last
         if question_num == 1
