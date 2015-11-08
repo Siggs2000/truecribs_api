@@ -26,7 +26,9 @@ class QuestionsController < ApplicationController
 
     p "COUNT IS: #{@count}"
     if @count == @player_count
-      game.update(stage:2)
+      stage = game.stage
+      stage = stage + 1
+      game.update(stage:stage)
       next_question = (params[:id].to_i + 1)
       @next_question = Question.find(next_question)
       redirect_to question_path(@next_question)

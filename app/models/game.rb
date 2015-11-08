@@ -1,6 +1,7 @@
 class Game < ActiveRecord::Base
   has_many :users
   has_many :questions
+  after_create :set_stage
 
   def build_questions(vendor)
     build_neighborhood_question(vendor)
@@ -26,5 +27,11 @@ class Game < ActiveRecord::Base
       @location = "Phoenix"
     end
     Question.new.get_listing_question_listings(@location,vendor,self.id)
+  end
+
+  private
+
+  def set_stage
+    self.update(stage:1)
   end
 end
