@@ -34,7 +34,7 @@ class QuestionsController < ApplicationController
       if Question.where(id:next_question).count == 0
         users = User.where(game_id:game.id).order(score: :desc)
         game.update(status:"completed", winner:users.first.id)
-        redirect_to new_games_path
+        redirect_to new_game_path
       else
         @next_question = Question.find(next_question)
         redirect_to question_path(@next_question)
